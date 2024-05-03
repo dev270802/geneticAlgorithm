@@ -518,38 +518,36 @@ def main():
     
     vrp_csv_path = st.sidebar.file_uploader("Upload VRP Dataset")
     routes_csv_path = st.sidebar.file_uploader("Upload Routes Dataset")
-    
+        
+
+
+    if "tour" not in st.session_state:
+        st.session_state.tour = []
+        st.session_state.tour_length = 0
+
     if vrp_csv_path and routes_csv_path:
-
         if st.button("Run Optimization"):
-            # Call your optimization functions here
-            tour, tour_length = gaAlgorithm([], '', '', 0)
-
+            st.session_state.tour, st.session_state.tour_length = gaAlgorithm([], '', '', 0)
             st.subheader("Optimized Tour:")
-            st.write(tour)
-
+            st.write(st.session_state.tour)
             st.subheader("Tour Length:")
-            st.write(tour_length)
-            
-            # Populate the selection box with the optimized tour
-            option= st.selectbox("Select New Start Node", tour,index=None)
-            print(option)
-            if option:  # Check if an option is selected
-                print('Hii in their')
-                visitedNode = []
-                for item in tour:
-                    visitedNode.append(item)
-                    if item == option:
-                        break
-                
-                # Call optimization function with the selected node as the start
-                tour, tour_length = gaAlgorithm(visitedNode, option, tour[len(tour)-1], 0)
+            st.write(st.session_state.tour_length)
 
-                st.subheader("Optimized Tour:")
-                st.write(tour)
+        option = st.selectbox("Select New Start Node", st.session_state.tour, index=None)
 
-                st.subheader("Tour Length:")
-                st.write(tour_length)
+        if option is not None:
+            visitedNode = []
+            for item in st.session_state.tour:
+                visitedNode.append(item)
+                if item == option:
+                    break
+
+            # Call optimization function with the selected node as the start
+            st.session_state.tour, st.session_state.tour_length = gaAlgorithm(visitedNode, option, st.session_state.tour[-1], 1)
+            st.subheader("Optimized Tour:")
+            st.write(st.session_state.tour)
+            st.subheader("Tour Length:")
+            st.write(st.session_state.tour_length)
 
 
 
